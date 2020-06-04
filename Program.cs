@@ -5,8 +5,8 @@ namespace patterns
     public class Rectangle
     {
 
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public virtual int Width { get; set; }
+        public virtual int Height { get; set; }
 
         public Rectangle()
         {
@@ -26,7 +26,7 @@ namespace patterns
 
     public class Square : Rectangle
     {
-        public new int Width
+        public override int Width
         {
             set
             {
@@ -34,7 +34,7 @@ namespace patterns
             }
         }
 
-        public new int Height
+        public override int Height
         {
             set
             {
@@ -58,7 +58,7 @@ namespace patterns
 
             Rectangle sq2 = new Square();
             sq2.Width = 4;
-            Console.WriteLine($"{sq2} has area {Area(sq2)}"); // result 0
+            Console.WriteLine($"{sq2} has area {Area(sq2)}"); // result 16
 
         }
     }
