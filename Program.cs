@@ -18,11 +18,18 @@ namespace patterns
         public DateTime DateOfBirth;
     }
 
+    public interface IRelationshipBrowser
+    {
+        IEnumerable<Person> FindAllChildrenOf(string name);
+    }
+
 
     // low-level
-
-    public class Relationships
+    public class Relationships : IRelationshipBrowser
     {
+
+        // Relationships can  change the way that it stores the relationships. 
+        // It can change the underlying data structure because it's never exposed to the high level modules which are actually consuming it.
         private List<(Person, Relationship, Person)> relations
             = new List<(Person, Relationship, Person)>();
 
@@ -32,7 +39,16 @@ namespace patterns
             relations.Add((child, Relationship.Child, parent));
         }
 
-        public List<(Person, Relationship, Person)> Relations => relations;
+        public IEnumerable<Person> FindAllChildrenOf(string name)
+        {
+            foreach (var r in relations.Where(
+                x => x.Item1.Name == name &&
+                x.Item2 == Relationship.Parent
+            ))
+            {
+                yield return r.Item3;
+            }
+        }
 
     }
 
@@ -40,25 +56,15 @@ namespace patterns
     public class Research
     {
 
-        // The problem with this scenario is that we're accessing a very low level part of the relationships class 
-        // where accessing its data store and where accessing it through specifically designed property which exposes the private thing has public.
-        // And what this means in practice? That relationships cannot change its mind about how to store the relations
-        public Research(Relationships relationships)
+        public Research(IRelationshipBrowser browser)
         {
-            var relations = relationships.Relations;
-            foreach (var r in relations
-            .Where(
-                x => x.Item1.Name == "Pierpaolo" &&
-                x.Item2 == Relationship.Parent
-            )
-            )
+            foreach (var p in browser.FindAllChildrenOf("Pierpaolo"))
             {
-                Console.WriteLine($"Pierpaolo has a child called {r.Item3.Name}");
+                Console.WriteLine($"Pierpaolo has a child called {p.Name}");
             }
         }
         static void Main(string[] args)
         {
-            //Console.WriteLine("SONJO QUI!!!");
             var parent = new Person { Name = "Pierpaolo" };
             var child1 = new Person { Name = "Gloria" };
             var child2 = new Person { Name = "Unkwon" };
