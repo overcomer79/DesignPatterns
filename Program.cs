@@ -56,10 +56,11 @@ namespace patterns
             root.Name = rootName;
         }
 
-        public void AddChild(string childName, string childText)
+        public HtmlBuilder AddChild(string childName, string childText)
         {
             var e = new HtmlElement(childName, childText);
             root.Elements.Add(e);
+            return this;
         }
 
         public override string ToString()
@@ -96,10 +97,7 @@ namespace patterns
 
             //Using builders
             var builder = new HtmlBuilder("ul");
-            foreach (var word in words)
-            {
-                builder.AddChild("li", word);
-            }
+            builder.AddChild("li", "hello").AddChild("li", "world");
             Console.WriteLine(builder);
 
         }
